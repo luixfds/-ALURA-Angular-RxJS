@@ -1,27 +1,116 @@
 # Buscante
+Projeto seguindo uma video aula no Alura sobre Rxjs com Angular
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.0.3.
+## Notas:
 
-## Development server
+#### OPERADORES E UTILITARIOS DO RXJS PARA MANIPULAR OBSERVABLES:
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+1 - map: Transforma cada item emitido pelo Observable.
 
-## Code scaffolding
+    import { from } from 'rxjs';
+    import { map } from 'rxjs/operators';
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+    const numbers = from([1, 2, 3, 4, 5]);
+    const squared = numbers.pipe(map(x => x * x));
 
-## Build
+    squared.subscribe(result => console.log(result));
+    // Saída: 1, 4, 9, 16, 25
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+2 - filter: Filtra os itens emitidos com base em uma condição.
 
-## Running unit tests
+    import { from } from 'rxjs';
+    import { filter } from 'rxjs/operators';
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+    const numbers = from([1, 2, 3, 4, 5]);
+    const evens = numbers.pipe(filter(x => x % 2 === 0));
 
-## Running end-to-end tests
+    evens.subscribe(result => console.log(result));
+    // Saída: 2, 4
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+3 - merge: Combina múltiplos Observables em um único fluxo.
 
-## Further help
+    import { interval, merge } from 'rxjs';
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+    const numbers = interval(1000);
+    const letters = interval(1500);
+
+    const combined = merge(numbers, letters);
+
+    combined.subscribe(result => console.log(result));
+    // Saída: 0, 0, 1, 1, 2, 3, ...
+
+4 - concat: Concatena dois ou mais Observables.
+
+    import { of, concat } from 'rxjs';
+
+    const numbers = of(1, 2, 3);
+    const letters = of('a', 'b', 'c');
+
+    const combined = concat(numbers, letters);
+
+    combined.subscribe(result => console.log(result));
+    // Saída: 1, 2, 3, 'a', 'b', 'c'
+
+5 - debounceTime: Adia a emissão de itens até que não haja novos itens emitidos por um determinado período.
+
+    import { fromEvent } from 'rxjs';
+    import { debounceTime, map } from 'rxjs/operators';
+
+    const input = document.getElementById('search-input');
+    const keyup = fromEvent(input, 'keyup');
+
+    const debouncedInput = keyup.pipe(debounceTime(300));
+    const search = debouncedInput.pipe(map(event => (event.target as HTMLInputElement).value));
+
+    search.subscribe(query => console.log(`Search: ${query}`));
+
+6 - tap: Permite realizar ações secundárias sem modificar o valor do item.
+
+    import { of } from 'rxjs';
+    import { tap, map } from 'rxjs/operators';
+
+    const numbers = of(1, 2, 3);
+
+    const squaredAndLogged = numbers.pipe(
+    tap(x => console.log(`Antes do quadrado: ${x}`)),
+    map(x => x * x),
+    tap(x => console.log(`Depois do quadrado: ${x}`))
+    );
+
+    squaredAndLogged.subscribe(result => console.log(result));
+    // Saída:
+    // Antes do quadrado: 1
+    // Depois do quadrado: 1
+    // Antes do quadrado: 2
+    // Depois do quadrado: 4
+    // Antes do quadrado: 3
+    // Depois do quadrado: 9
+
+7 - pipe: Combina múltiplos operadores em uma única função encadeada.
+
+    import { of } from 'rxjs';
+    import { map, filter } from 'rxjs/operators';
+
+    const numbers = of(1, 2, 3, 4, 5);
+
+    const squaredEvens = numbers.pipe(
+    filter(x => x % 2 === 0),
+    map(x => x * x)
+    );
+
+    squaredEvens.subscribe(result => console.log(result));
+    // Saída: 4, 16
+
+8 - mergeMap (ou flatMap): Mapeia cada valor para um Observable e os mescla em um único fluxo.
+
+    import { from } from 'rxjs';
+    import { mergeMap } from 'rxjs/operators';
+
+    const letters = from(['a', 'b', 'c']);
+
+    const combined = letters.pipe(
+    mergeMap(letter => from([letter, letter.toUpperCase()]))
+    );
+
+    combined.subscribe(result => console.log(result));
+    // Saída: 'a', 'A', 'b', 'B', 'c', 'C'
