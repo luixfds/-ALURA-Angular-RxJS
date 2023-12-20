@@ -119,11 +119,17 @@ Projeto seguindo uma video aula no Alura sobre Rxjs com Angular
 #### PIPES DO ANGULAR:
 
 1 - DatePipe: formata um valor de data de acordo com as regras de localidade.
+
 2 - UpperCasePipe: transforma o texto em letras maiúsculas.
+
 3 - LowerCasePipe: transforma o texto em letras minúsculas.
+
 4 - CurrencyPipe: transforma um número em uma string de moeda, formatada de acordo com as regras de localidade.
+
 5 - DecimalPipe: transforma um número em uma string com um ponto decimal, formatado de acordo com as regras de localidade.
+
 6 - PercentPipe: transforma um número em uma string de porcentagem, formatada de acordo com as regras de localidade.
+
 
 #### OPERADORES RXJS:
 
