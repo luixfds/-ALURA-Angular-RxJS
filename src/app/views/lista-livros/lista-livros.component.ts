@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { FormControl } from '@angular/forms';
+import { Subscription, map, switchMap, tap } from 'rxjs';
 import { Item, Livro } from 'src/app/models/books-DTO';
 import { LivroVolumeInfo } from 'src/app/models/livroVolumeInfo';
 import { LivrosService } from 'src/app/services/livros.service';
@@ -9,12 +10,13 @@ import { LivrosService } from 'src/app/services/livros.service';
   templateUrl: './lista-livros.component.html',
   styleUrls: ['./lista-livros.component.css']
 })
-export class ListaLivrosComponent implements OnInit , OnDestroy {
+export class ListaLivrosComponent implements OnInit {
 
-  listaLivros: Livro[];
-  campoBusca: string = ''
-  subscription: Subscription
-  livro: Livro
+  campoBusca = new FormControl()
+  //listaLivros: Livro[];
+  //campoBusca: string = ''
+  //subscription: Subscription
+  //livro: Livro
 
   constructor(
     private livrosService: LivrosService
@@ -24,9 +26,9 @@ export class ListaLivrosComponent implements OnInit , OnDestroy {
 
   }
 
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
-  }
+//  ngOnDestroy() {
+//    this.subscription.unsubscribe();
+//  }
 
   livrosResultadoParaLivros(items: Item[]): LivroVolumeInfo[] {
     return items.map(item => {
@@ -51,22 +53,35 @@ export class ListaLivrosComponent implements OnInit , OnDestroy {
 //    return livros
   }
 
-  getLivroByName(){
-    this. subscription = this.livrosService.getLivros(this.campoBusca).subscribe({
-      //next: data => {
-        //console.log("Next:", data);
-      //},
-      next: (items) => {
-       this.listaLivros = this.livrosResultadoParaLivros(items)
-      },
-      error: error => {
-        console.error("Error:", error);
-      },
-      complete: () => {
-        console.log("Complete:", "completo chefe");
-      }
-    })
-  }
+// natural usar o simbolo $ quando a variavel representa um observable
+// observable que faz a requisicao dinamica somente com o ultimo valor digitado
+  livrosEncontrados$ = this.campoBusca.valueChanges
+  .pipe(
+    tap(() => console.log("fluxo inicial")),
+    switchMap((valorDigitado) => this.livrosService.getLivros(valorDigitado)),
+    tap(() => console.log("Qtd requisiçoes feitas graças ao SwitchMap")),
+    map(items => this.livrosResultadoParaLivros(items)
+    )
+  )
+
+//  METODO DE BUSCA ANTIGO SEM A IMPLEMENTACAO DA BUSCA DINAMICA
+//  getLivroByName(){
+//    this. subscription = this.livrosService.getLivros(this.campoBusca).subscribe({
+//      //next: data => {
+//        //console.log("Next:", data);
+//      //},
+//      next: (items) => {
+//        console.log("requisitei")
+//        this.listaLivros = this.livrosResultadoParaLivros(items)
+//      },
+//      error: error => {
+//        console.error("Error:", error);
+//      },
+//      complete: () => {
+//        //console.log("Complete:", "completo chefe");
+//      }
+//    })
+//  }
 
 }
 
