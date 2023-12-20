@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Subscription, debounceTime, filter, map, switchMap, tap } from 'rxjs';
+import { Subscription, debounceTime, distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs';
 import { Item, Livro } from 'src/app/models/books-DTO';
 import { LivroVolumeInfo } from 'src/app/models/livroVolumeInfo';
 import { LivrosService } from 'src/app/services/livros.service';
@@ -62,6 +62,7 @@ export class ListaLivrosComponent implements OnInit {
     debounceTime(searchTime),
     filter((valorDigitado) => valorDigitado.length >= 3),
     tap(() => console.log("fluxo inicial")),
+    distinctUntilChanged(),
     switchMap((valorDigitado) => this.livrosService.getLivros(valorDigitado)),
     tap(() => console.log("Qtd requisiçoes feitas graças ao SwitchMap")),
     map(items => this.livrosResultadoParaLivros(items)
