@@ -8,7 +8,7 @@ import { Item, LivrosResultado } from '../models/books-DTO';
 })
 export class LivrosService {
 
-  private readonly BookAPI = 'https://www.googleapis.com/books/v1/volume'
+  private readonly BookAPI = 'https://www.googleapis.com/books/v1/volumes'
   constructor(
     private http: HttpClient
   ) { }
