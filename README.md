@@ -124,3 +124,10 @@ Projeto seguindo uma video aula no Alura sobre Rxjs com Angular
 4 - CurrencyPipe: transforma um número em uma string de moeda, formatada de acordo com as regras de localidade.
 5 - DecimalPipe: transforma um número em uma string com um ponto decimal, formatado de acordo com as regras de localidade.
 6 - PercentPipe: transforma um número em uma string de porcentagem, formatada de acordo com as regras de localidade.
+
+#### OPERADORES RXJS:
+
+1 - switchMap - Operador de Transformação. Cancela requisições de observables anteriores, emitindo valores apenas do Observable projetado mais recentemente.
+2 - filter - Operador de filtragem. Filtra os itens emitidos pelo Observable de origem, permitindo apenas aqueles que satisfaçam uma condição especificada.
+3 - debounceTime - Operador de filtragem. Retorna um Observable que atrasa as emissões do Observable de origem pelo tempo especificado.
+4 - distinctUntilChanged - Operador de filtragem. Retorna um Observable que emite todos os valores enviados pelo observable de origem se forem distintos em comparação com o último valor emitido pelo observable de resultado.
