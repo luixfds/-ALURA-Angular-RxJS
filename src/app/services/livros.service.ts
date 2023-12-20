@@ -13,12 +13,13 @@ export class LivrosService {
     private http: HttpClient
   ) { }
 
-  getLivros(name: string): Observable<Item[]> {
+  getLivros(name: string): Observable<LivrosResultado> {
     const params = new HttpParams().append('q', name)
-    return this.http.get<LivrosResultado>(this.BookAPI, {params}).pipe(
-      tap(response=> console.log("tap: ", response)),
-      map(response=> response.items),
-      tap(response=> console.log("tap pos map: ", response)),
-    )
+    return this.http.get<LivrosResultado>(this.BookAPI, {params})
+    //.pipe(
+    //  tap(response=> console.log("tap: ", response)),
+    //  map(response=> response.items ?? []),
+    //  tap(response=> console.log("tap pos map: ", response)),
+    //)
   }
 }

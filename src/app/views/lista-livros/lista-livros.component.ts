@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Subscription, catchError, debounceTime, distinctUntilChanged, filter, map, switchMap, tap, throwError } from 'rxjs';
-import { Item, Livro } from 'src/app/models/books-DTO';
+import { Item, Livro, LivrosResultado } from 'src/app/models/books-DTO';
 import { LivroVolumeInfo } from 'src/app/models/livroVolumeInfo';
 import { LivrosService } from 'src/app/services/livros.service';
 
@@ -16,7 +16,8 @@ export class ListaLivrosComponent implements OnInit {
 
   campoBusca = new FormControl()
   errorMessage: string = ""
-  //listaLivros: Livro[];
+  livrosResultado: LivrosResultado
+  listaLivros: Livro[];
   //campoBusca: string = ''
   //subscription: Subscription
   //livro: Livro
@@ -58,21 +59,27 @@ export class ListaLivrosComponent implements OnInit {
 
 // natural usar o simbolo $ quando a variavel representa um observable
 // observable que faz a requisicao dinamica somente com o ultimo valor digitado
-  livrosEncontrados$ = this.campoBusca.valueChanges
-  .pipe(
-    debounceTime(searchTime),
-    filter((valorDigitado) => valorDigitado.length >= 3),
-    tap(() => console.log("fluxo inicial")),
-    distinctUntilChanged(),
-    switchMap((valorDigitado) => this.livrosService.getLivros(valorDigitado)),
-    tap(() => console.log("Qtd requisiçoes feitas graças ao SwitchMap")),
-    map((items) => this.livrosResultadoParaLivros(items),
-    ),
-    catchError(erro => {
-      console.log(erro)
-      return throwError(() => new Error(this.errorMessage = "Erro desconhecido, recarregue a Aplicação"))
+livrosEncontrados$ = this.campoBusca.valueChanges.pipe(
+  debounceTime(searchTime),
+  tap(() => {
+    console.log('Fluxo inicial de dados');
+  }),
+  filter(
+    (valorDigitado) => valorDigitado.length >= 3
+  ),
+  switchMap(
+    (valorDigitado) => this.livrosService.getLivros(valorDigitado)
+  ),
+  map(resultado => this.livrosResultado = resultado),
+  map(resultado => resultado.items ?? []),
+  tap(console.log),
+  map(items => this.listaLivros =   this.livrosResultadoParaLivros(items)),
+  catchError(erro =>
+    { console.log(erro);
+      return throwError(() =>
+      new Error(this.errorMessage = `Erro Desconhecido! Recarregue a aplicação!`));
     })
-  )
+);
 
 //  METODO DE BUSCA ANTIGO SEM A IMPLEMENTACAO DA BUSCA DINAMICA
 //  getLivroByName(){
