@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { Livro } from 'src/app/models/books-DTO';
+import { Item, Livro } from 'src/app/models/books-DTO';
+import { LivroVolumeInfo } from 'src/app/models/livroVolumeInfo';
 import { LivrosService } from 'src/app/services/livros.service';
 
 @Component({
@@ -27,22 +28,27 @@ export class ListaLivrosComponent implements OnInit , OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  livrosResultadoParaLivros(items): Livro[] {
-    const livros: Livro[] = [];
-
-    items.forEach(item => {
-      livros.push(this.livro = {
-        title: item.volumeInfo?.title,
-        authors: item.volumeInfo?.authors,
-        publisher: item.volumeInfo?.publisher,
-        publishedDate: item.volumeInfo?.publishedDate,
-        description: item.volumeInfo?.description,
-        previewLink: item.volumeInfo?.previewLink,
-        thumbnail: item.volumeInfo?.imageLinks.thumbnail,
-      })
+  livrosResultadoParaLivros(items: Item[]): LivroVolumeInfo[] {
+    return items.map(item => {
+      return new LivroVolumeInfo(item)
     })
 
-    return livros
+//  METODO ANTIGO, ANTES DE PASSAR A RESPONSABILIDADE DE CRIAR O OBJETO PARA A CLASSE
+//    const livros: Livro[] = [];
+//
+//    items.forEach(item => {
+//      livros.push(this.livro = {
+//        title: item.volumeInfo?.title,
+//        authors: item.volumeInfo?.authors,
+//        publisher: item.volumeInfo?.publisher,
+//        publishedDate: item.volumeInfo?.publishedDate,
+//        description: item.volumeInfo?.description,
+//        previewLink: item.volumeInfo?.previewLink,
+//        thumbnail: item.volumeInfo?.imageLinks?.thumbnail,
+//      })
+//    })
+//
+//    return livros
   }
 
   getLivroByName(){
