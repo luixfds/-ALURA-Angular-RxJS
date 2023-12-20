@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Subscription, debounceTime, distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs';
+import { Subscription, catchError, debounceTime, distinctUntilChanged, filter, map, switchMap, tap, throwError } from 'rxjs';
 import { Item, Livro } from 'src/app/models/books-DTO';
 import { LivroVolumeInfo } from 'src/app/models/livroVolumeInfo';
 import { LivrosService } from 'src/app/services/livros.service';
@@ -15,6 +15,7 @@ const searchTime = 300
 export class ListaLivrosComponent implements OnInit {
 
   campoBusca = new FormControl()
+  errorMessage: string = ""
   //listaLivros: Livro[];
   //campoBusca: string = ''
   //subscription: Subscription
@@ -65,8 +66,12 @@ export class ListaLivrosComponent implements OnInit {
     distinctUntilChanged(),
     switchMap((valorDigitado) => this.livrosService.getLivros(valorDigitado)),
     tap(() => console.log("Qtd requisiçoes feitas graças ao SwitchMap")),
-    map(items => this.livrosResultadoParaLivros(items)
-    )
+    map((items) => this.livrosResultadoParaLivros(items),
+    ),
+    catchError(erro => {
+      console.log(erro)
+      return throwError(() => new Error(this.errorMessage = "Erro desconhecido, recarregue a Aplicação"))
+    })
   )
 
 //  METODO DE BUSCA ANTIGO SEM A IMPLEMENTACAO DA BUSCA DINAMICA
